@@ -1,14 +1,43 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 동물상 테스트 - 당신은 어떤 동물인가요?</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
+    <!-- TensorFlow.js and Teachable Machine Image libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+    <div class="noise"></div>
+    <main class="container">
+        <header class="hero">
+            <h1 class="title">AI 동물상 테스트</h1>
+            <p class="subtitle">얼굴로 보는 인공지능 동물상 분석</p>
+        </header>
+
+        <section class="test-area">
+            <div id="webcam-container" class="webcam-wrapper">
+                <div class="placeholder">
+                    <button type="button" class="btn-start" id="btn-start">시작하기</button>
+                    <p class="hint">카메라를 허용해주세요</p>
+                </div>
+            </div>
+            
+            <div id="label-container" class="results-wrapper">
+                <!-- Predictions will be injected here -->
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>© 2026 Animal Face AI Project. Powered by Teachable Machine.</p>
+        </footer>
+    </main>
+
+    <script type="module" src="main.js"></script>
 </body>
 </html>
