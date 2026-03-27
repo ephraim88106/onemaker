@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 동물상 테스트 - 당신은 어떤 동물인가요?</title>
+    <title>AI 페이스 랩 - 당신의 얼굴을 분석합니다</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,71 +14,105 @@
 </head>
 <body>
     <div class="noise"></div>
+    
     <main class="container">
-        <header class="hero">
-            <h1 class="title">AI 동물상 테스트</h1>
-            <p class="subtitle">얼굴로 보는 인공지능 동물상 분석</p>
-        </header>
+        <!-- 홈 화면: 테스트 선택 -->
+        <section id="view-home" class="view active">
+            <header class="hero">
+                <h1 class="title">AI 페이스 랩</h1>
+                <p class="subtitle">인공지능이 분석하는 당신의 운명과 매력</p>
+            </header>
 
-        <section class="test-area">
-            <div id="upload-container" class="upload-wrapper">
-                <div class="upload-placeholder" id="upload-placeholder">
-                    <div class="upload-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="switchView('view-king')">
+                    <div class="card-icon">👑</div>
+                    <div class="card-info">
+                        <h3>왕이 될 상인가</h3>
+                        <p>영화 속 인물들과 나의 관상을 비교해보세요</p>
                     </div>
-                    <button type="button" class="btn-upload" id="btn-upload">사진 올리기</button>
-                    <p class="hint">클릭하거나 파일을 드래그하여 업로드하세요</p>
-                    <input type="file" id="file-input" accept="image/*" hidden>
                 </div>
-                <img id="image-preview" class="image-preview" src="" alt="Preview" style="display: none;">
-                <div id="loading-overlay" class="loading-overlay" style="display: none;">
-                    <div class="loader"></div>
-                    <p>분석 중...</p>
-                </div>
-            </div>
-            
-            <div id="label-container" class="results-wrapper">
-                <!-- Detailed result will be injected here -->
-                <div id="result-card" class="result-card">
-                    <div class="result-header">
-                        <h2 id="result-title" class="result-title"></h2>
-                        <p id="result-percentage" class="result-percentage"></p>
-                    </div>
-                    <div class="result-description">
-                        <p id="description-main" class="description-main"></p>
-                        <div id="description-list" class="description-list"></div>
+                <div class="menu-card" onclick="switchView('view-animal')">
+                    <div class="card-icon">🐾</div>
+                    <div class="card-info">
+                        <h3>동물상 테스트</h3>
+                        <p>나와 가장 닮은 동물의 특징을 찾아보세요</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="comments-area">
-            <div id="disqus_thread"></div>
-            <script>
-                /**
-                *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-                *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-                /*
-                var disqus_config = function () {
-                this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-                this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                };
-                */
-                (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
-                s.src = 'https://onemaker.disqus.com/embed.js';
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-                })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <!-- 테스트 공통 영역 (동적 콘텐츠) -->
+        <section id="view-test" class="view">
+            <header class="hero">
+                <button class="btn-back" onclick="goHome()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    처음으로
+                </button>
+                <h1 id="test-title" class="title small">테스트 이름</h1>
+                <p id="test-subtitle" class="subtitle">테스트 설명</p>
+            </header>
+
+            <div class="test-area">
+                <div id="upload-container" class="upload-wrapper">
+                    <div class="upload-placeholder" id="upload-placeholder">
+                        <div class="upload-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <button type="button" class="btn-upload" id="btn-upload">사진 올리기</button>
+                        <p class="hint">클릭하거나 파일을 드래그하여 업로드하세요</p>
+                        <input type="file" id="file-input" accept="image/*" hidden>
+                    </div>
+                    <img id="image-preview" class="image-preview" src="" alt="Preview" style="display: none;">
+                    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+                        <div class="loader"></div>
+                        <p>분석 중...</p>
+                    </div>
+                </div>
+                
+                <div id="label-container" class="results-wrapper">
+                    <!-- 결과가 여기에 주입됩니다 -->
+                </div>
+
+                <div id="action-bar" class="action-bar" style="display: none;">
+                    <button type="button" class="btn-action btn-reset" id="btn-reset">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        다시 하기
+                    </button>
+                    <button type="button" class="btn-action btn-share" id="btn-share">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        공유하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 댓글은 테스트가 진행된 후에 하단에 계속 표시됩니다 -->
+            <section class="comments-area">
+                <div id="disqus_thread"></div>
+                <script>
+                    (function() {
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://onemaker.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+            </section>
         </section>
 
         <footer class="footer">
-            <p>© 2026 Animal Face AI Project. Powered by Teachable Machine.</p>
+            <p>© 2026 AI Face Lab Project. Powered by Teachable Machine.</p>
         </footer>
     </main>
 
     <script type="module" src="main.js"></script>
+    <script>
+        // 글로벌 스위칭 함수 (main.js에서 가져오기 전 간단한 초기화 방지)
+        function switchView(viewId) {
+            window.app && window.app.switchView(viewId);
+        }
+        function goHome() {
+            window.app && window.app.goHome();
+        }
+    </script>
 </body>
 </html>

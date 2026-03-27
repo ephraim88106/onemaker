@@ -1,40 +1,34 @@
-# Project Blueprint: AI Animal Face Test (Image Upload Version)
+# Project Blueprint: AI Face Lab (Multi-Test Platform)
 
 ## Overview
-A web-based application that analyzes a user's uploaded photo to determine their "animal face type" using a Teachable Machine AI model. Built with modern web standards and a premium aesthetic.
+A comprehensive web-based AI face analysis platform. Users can choose between different specialized tests, starting with "Animal Face Test" and "King of Face (Physiognomy) Test". Built with a modular view system and premium aesthetic.
 
 ## Features & Design
-- **AI Integration:** Uses Teachable Machine Image Model.
-- **Image Upload:** Supports file selection and drag-and-drop.
-- **Real-time Feedback:** Shows a loading overlay during analysis and instant result updates.
-- **Detailed Results:** 
-  - Shows only the most relevant animal type (top prediction).
-  - Provides a character-based description for each animal (Dog, Cat, Rabbit, Fox/Dino, Bear).
-  - Visualizes the match percentage.
-- **Community Engagement:** Integrated Disqus comment system for user feedback and interaction.
-- **Modern UI:** 
-  - Glassmorphism effects (blur, semi-transparent surfaces).
-  - Premium result card with expressive typography and structured feature lists.
-  - Responsive design using Container Queries.
-  - Subtle noise texture for a premium feel.
-- **Technology Stack:** Pure HTML, CSS (Modern Baseline), and JavaScript (ES Modules).
+- **Navigation System:** A main home screen to select between available AI tests.
+- **Multi-Test Support:** 
+  - **Animal Face Test:** Analysis of facial features compared to animal types.
+  - **King of Face Test:** Traditional physiognomy analysis using a specialized Teachable Machine model.
+- **Modular Architecture:** Unified upload and result display logic that adapts based on the selected test.
+- **Community & Sharing:** 
+  - Integrated Disqus comment system.
+  - Social sharing functionality (Web Share API with Clipboard fallback).
+  - Reset functionality to restart tests easily.
+- **Premium UI/UX:** 
+  - Multi-view navigation with smooth transitions.
+  - Glassmorphism effects and custom background support.
+  - Responsive design optimized for both mobile and desktop.
 
 ## Implementation Details
-- **`index.html`:** Structured with a dedicated upload area, a dynamic result card section, and a Disqus thread container.
-- **`style.css`:** Implements `oklch` color functions, `@container` queries, and CSS variables for a consistent theme. Includes specific styles for the `result-card` and `comments-area`.
+- **`index.html`:** Implements a view-switching structure (`view-home`, `view-test`).
+- **`style.css`:** Defined styles for menu cards, view transitions, and specialized result highlights. Supports full-screen background images with readability overlays.
 - **`main.js`:** 
-  - Loads the Teachable Machine model asynchronously.
-  - Handles file reading via `FileReader` API.
-  - Triggers model prediction on the previewed image.
-  - Contains a comprehensive mapping of animal types to detailed Korean descriptions and character traits.
-  - Dynamically updates the DOM with the top result and its associated features.
+  - Centralized `MODELS` configuration for easy expansion of new tests.
+  - Dynamic model loading and prediction logic.
+  - Comprehensive trait mapping for each test type (Animal labels vs. Gwan-sang labels).
 
 ## Current Steps (Completed)
-1.  **Replaced Webcam Logic:** Switched from live video stream to image upload functionality.
-2.  **UI Enhancements:** Added a clear upload placeholder with icon and drag-and-drop support.
-3.  **Loading State:** Implemented a loading overlay to provide feedback during AI processing.
-4.  **Result Display Overhaul:** 
-    - Replaced individual probability bars with a single, detailed result card.
-    - Added custom descriptions for Dog, Cat, Rabbit, Dino, and Bear types.
-    - Updated `predict` logic to identify the top match and display its specific traits.
-5.  **Social Integration:** Added Disqus comment system below the results area.
+1.  **Multi-Test Expansion:** Rebuilt the app into a platform called "AI Face Lab".
+2.  **Navigation Implementation:** Added a home screen with menu cards for test selection.
+3.  **Physiognomy Model Integration:** Applied a new specialized model (`p-L_fVwV6`) for the "King of Face" test.
+4.  **Utility Features:** Added "Reset" and "Share" buttons to the results area.
+5.  **Visual Overhaul:** Implemented a full-screen background image (`background.jpg`) with fixed attachment and noise texture.
