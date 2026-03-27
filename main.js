@@ -1,22 +1,24 @@
 /**
  * Animal Face AI - Main Logic
- * Uses Teachable Machine Image Model
+ * Uses Teachable Machine Image Model with Image Upload
  */
 
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/hZHASOkPE/";
 
-let model, webcam, labelContainer, maxPredictions;
+let model, labelContainer, maxPredictions;
+
+// DOM Elements
+const fileInput = document.getElementById('file-input');
+const btnUpload = document.getElementById('btn-upload');
+const uploadWrapper = document.getElementById('upload-container');
+const imagePreview = document.getElementById('image-preview');
+const uploadPlaceholder = document.getElementById('upload-placeholder');
+const loadingOverlay = document.getElementById('loading-overlay');
 
 /**
- * Initialize the application
+ * Initialize the application and load the model
  */
 async function init() {
-    const startBtn = document.getElementById('btn-start');
-    const webcamWrapper = document.getElementById('webcam-container');
-    
-    startBtn.disabled = true;
-    startBtn.textContent = '로딩 중...';
-
     try {
         const modelURL = MODEL_URL + "model.json";
         const metadataURL = MODEL_URL + "metadata.json";
@@ -25,16 +27,6 @@ async function init() {
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        // Setup webcam
-        const flip = true;
-        webcam = new tmImage.Webcam(400, 400, flip);
-        await webcam.setup();
-        await webcam.play();
-        
-        // Remove placeholder and add webcam canvas
-        webcamWrapper.innerHTML = '';
-        webcamWrapper.appendChild(webcam.canvas);
-        
         // Setup label container
         labelContainer = document.getElementById("label-container");
         labelContainer.innerHTML = ''; // Clear previous
@@ -43,30 +35,53 @@ async function init() {
             const resultItem = createResultItem(model.getClassLabels()[i]);
             labelContainer.appendChild(resultItem);
         }
-
-        window.requestAnimationFrame(loop);
+        
+        console.log("Model loaded successfully");
     } catch (error) {
-        console.error("Initialization failed:", error);
-        startBtn.disabled = false;
-        startBtn.textContent = '다시 시도하기';
-        alert("카메라 권한이 필요하거나 모델을 불러오는 데 실패했습니다.");
+        console.error("Model initialization failed:", error);
+        alert("모델을 불러오는 데 실패했습니다.");
     }
 }
 
 /**
- * Main animation loop
+ * Handle file selection and prediction
  */
-async function loop() {
-    webcam.update();
-    await predict();
-    window.requestAnimationFrame(loop);
+async function handleImageUpload(file) {
+    if (!file || !file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다.');
+        return;
+    }
+
+    if (!model) {
+        await init();
+    }
+
+    // Show loading and preview
+    loadingOverlay.style.display = 'flex';
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        uploadPlaceholder.style.display = 'none';
+
+        // Wait for image to load to predict
+        imagePreview.onload = async () => {
+            await predict(imagePreview);
+            loadingOverlay.style.display = 'none';
+        };
+    };
+    reader.readAsDataURL(file);
 }
 
 /**
  * Run prediction and update UI
  */
-async function predict() {
-    const prediction = await model.predict(webcam.canvas);
+async function predict(imageElement) {
+    const prediction = await model.predict(imageElement);
+    
+    // Sort predictions by probability (optional, but current UI expects fixed order)
+    // For consistency with previous UI, we'll keep the order from the model
     
     for (let i = 0; i < maxPredictions; i++) {
         const probability = prediction[i].probability.toFixed(2);
@@ -107,4 +122,31 @@ function createResultItem(className) {
 }
 
 // Event Listeners
-document.getElementById('btn-start').addEventListener('click', init);
+btnUpload.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleImageUpload(e.target.files[0]);
+    }
+});
+
+// Drag and Drop
+uploadWrapper.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadWrapper.classList.add('dragover');
+});
+
+uploadWrapper.addEventListener('dragleave', () => {
+    uploadWrapper.classList.remove('dragover');
+});
+
+uploadWrapper.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadWrapper.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+        handleImageUpload(e.dataTransfer.files[0]);
+    }
+});
+
+// Initial call to load model and setup UI
+init();

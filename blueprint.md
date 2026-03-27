@@ -1,29 +1,31 @@
-# Animal Face Test - Project Blueprint
+# Project Blueprint: AI Animal Face Test (Image Upload Version)
 
 ## Overview
-A modern, AI-powered web application that identifies a user's "animal face" type using a Google Teachable Machine model. The app provides a premium, interactive experience with real-time feedback and a polished UI.
+A web-based application that analyzes a user's uploaded photo to determine their "animal face type" using a Teachable Machine AI model. Built with modern web standards and a premium aesthetic.
 
 ## Features & Design
-- **AI Integration:** Real-time face analysis using TensorFlow.js and Teachable Machine.
+- **AI Integration:** Uses Teachable Machine Image Model.
+- **Image Upload:** Supports file selection and drag-and-drop.
+- **Real-time Feedback:** Shows a loading overlay during analysis and instant result updates.
 - **Modern UI:** 
-  - Soft dark theme using `oklch` color space.
-  - Subtle noise texture background for a premium feel.
-  - Glassmorphism effects for the webcam container.
-  - Multi-layered drop shadows for depth.
-- **Responsiveness:** Fully mobile-responsive design using container queries and logical properties.
-- **Interactivity:** Smooth transitions, hover effects with "glow" shadows, and clear state indicators.
-- **Accessibility:** Semantic HTML, ARIA labels, and high-contrast color palette.
+  - Glassmorphism effects (blur, semi-transparent surfaces).
+  - Custom progress bars for probability visualization.
+  - Responsive design using Container Queries.
+  - Dynamic highlighting for top results.
+  - Subtle noise texture for a premium feel.
+- **Technology Stack:** Pure HTML, CSS (Modern Baseline), and JavaScript (ES Modules).
 
-## Technical Details
-- **Framework-less:** Pure HTML, CSS, and JavaScript.
-- **Web Standards:** 
-  - ES Modules for clean logic separation.
-  - CSS Variables for consistent theming.
-  - Modern CSS features: `@container`, `:has()`, `oklch()`.
-- **Model URL:** `https://teachablemachine.withgoogle.com/models/hZHASOkPE/`
+## Implementation Details
+- **`index.html`:** Structured with a dedicated upload area and results section.
+- **`style.css`:** Implements `oklch` color functions, `@container` queries, and CSS variables for a consistent theme.
+- **`main.js`:** 
+  - Loads the Teachable Machine model asynchronously.
+  - Handles file reading via `FileReader` API.
+  - Triggers model prediction on the previewed image.
+  - Dynamically updates the DOM with result bars.
 
-## Execution Plan
-1. [x] **Structure:** Update `index.html` with semantic tags and library links.
-2. [x] **Style:** Implement a premium CSS design in `style.css`.
-3. [x] **Logic:** Implement Teachable Machine initialization and prediction in `main.js`.
-4. [x] **Validation:** Verify webcam access and prediction accuracy in the preview.
+## Current Steps (Completed)
+1.  **Replaced Webcam Logic:** Switched from live video stream to image upload functionality.
+2.  **UI Enhancements:** Added a clear upload placeholder with icon and drag-and-drop support.
+3.  **Loading State:** Implemented a loading overlay to provide feedback during AI processing.
+4.  **Prediction Logic Update:** Modified the prediction function to work with static images instead of canvas frames.

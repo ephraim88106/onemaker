@@ -71,8 +71,8 @@ body {
     container-type: inline-size;
 }
 
-/* Webcam Section */
-.webcam-wrapper {
+/* Upload Section */
+.upload-wrapper {
     position: relative;
     aspect-ratio: 1 / 1;
     width: min(100%, 400px);
@@ -85,23 +85,36 @@ body {
     justify-content: center;
     align-items: center;
     backdrop-filter: blur(10px);
-    border: 1px solid oklch(100% 0 0 / 0.1);
+    border: 2px dashed oklch(100% 0 0 / 0.1);
+    transition: border-color 0.2s, background-color 0.2s;
+    cursor: pointer;
 }
 
-.webcam-wrapper canvas {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
+.upload-wrapper.dragover {
+    border-color: var(--accent-color);
+    background-color: oklch(25% 0.03 260 / 0.95);
 }
 
-.placeholder {
+.upload-placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: 2rem;
 }
 
-.btn-start {
+.upload-icon {
+    color: var(--accent-color);
+    opacity: 0.8;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-upload {
     background-color: var(--accent-color);
     color: var(--bg-color);
     border: none;
@@ -114,9 +127,35 @@ body {
     box-shadow: var(--glow-shadow);
 }
 
-.btn-start:hover {
+.btn-upload:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 30px oklch(70% 0.15 260 / 0.5);
+}
+
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: oklch(0% 0 0 / 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    backdrop-filter: blur(4px);
+}
+
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--accent-color);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .hint {
