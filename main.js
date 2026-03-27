@@ -1,8 +1,7 @@
 /**
- * AI Face Lab - Main Logic
+ * AI Face Lab - Premium Logic
  */
 
-// 모델 설정
 const MODELS = {
     'view-animal': {
         url: "https://teachablemachine.withgoogle.com/models/hZHASOkPE/",
@@ -29,7 +28,7 @@ const MODELS = {
                 "title": "토끼상",
                 "main": "상큼하고 발랄한 에너지! 맑고 깨끗한 느낌의 첫인상으로 주변을 화사하게 만듭니다.",
                 "features": [
-                    { "title": "비타민 같은 존재", "text": "특유의 밝은 에너지로 모임의 분위기 메이커 역할을 합니다." },
+                    { "title": "비타민 같은 존재", "text": "특유의 밝은 에너지로 모임의 분위기를 화사하게 만듭니다." },
                     { "title": "호기심 천국", "text": "새로운 것에 대한 호기심이 많고 배우는 것을 즐깁니다." }
                 ]
             },
@@ -122,24 +121,20 @@ const labelContainer = document.getElementById('label-container');
 const actionBar = document.getElementById('action-bar');
 const btnReset = document.getElementById('btn-reset');
 const btnShare = document.getElementById('btn-share');
+const scannerLine = document.getElementById('scanner-line');
 
-/**
- * 뷰 전환 로직
- */
 const app = {
     switchView: async function(viewId) {
         currentView = viewId;
         currentModelInfo = MODELS[viewId];
         
-        // UI 설정
         testTitle.textContent = currentModelInfo.title;
         testSubtitle.textContent = currentModelInfo.subtitle;
         
-        // 화면 전환
         views.home.classList.remove('active');
         views.test.classList.add('active');
         
-        // 모델 미리 로드
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         await this.loadModel();
     },
 
@@ -153,14 +148,14 @@ const app = {
         if (!currentModelInfo) return;
         loadingOverlay.style.display = 'flex';
         try {
-            model = await tmImage.load(
-                currentModelInfo.url + "model.json", 
-                currentModelInfo.url + "metadata.json"
-            );
-            console.log("Model loaded for", currentView);
+            // URL 안정성 확보 (슬래시 처리)
+            const baseUrl = currentModelInfo.url.endsWith('/') ? currentModelInfo.url : currentModelInfo.url + '/';
+            model = await tmImage.load(baseUrl + "model.json", baseUrl + "metadata.json");
+            console.log("Model loaded successfully");
         } catch (e) {
             console.error("Model load failed", e);
-            alert("모델 로딩 중 오류가 발생했습니다.");
+            alert("인공지능 모델을 불러오는 데 실패했습니다. 인터넷 연결을 확인하거나 잠시 후 다시 시도해주세요.");
+            this.goHome();
         } finally {
             loadingOverlay.style.display = 'none';
         }
@@ -173,67 +168,81 @@ const app = {
         imagePreview.src = '';
         uploadPlaceholder.style.display = 'flex';
         fileInput.value = '';
+        scannerLine.style.display = 'none';
     }
 };
 
-// 전역 등록 (HTML에서 호출 가능하도록)
 window.app = app;
 
-/**
- * 예측 로직
- */
 async function predict(imageElement) {
-    if (!model) await app.loadModel();
+    if (!model) {
+        await app.loadModel();
+        if (!model) return;
+    }
     
-    const prediction = await model.predict(imageElement);
-    prediction.sort((a, b) => b.probability - a.probability);
-
-    labelContainer.innerHTML = '';
-
-    prediction.forEach((p, index) => {
-        const prob = (p.probability * 100).toFixed(0);
-        if (prob < 1) return;
-
-        const className = p.className.toLowerCase();
-        const desc = currentModelInfo.descriptions[className] || {
-            title: p.className,
-            main: "당신의 운명은...",
-            features: []
-        };
-
-        const card = document.createElement('div');
-        card.className = `result-card ${index === 0 ? 'top-match' : ''}`;
+    // 스캐너 애니메이션 시작
+    scannerLine.style.display = 'block';
+    
+    try {
+        const prediction = await model.predict(imageElement);
+        // 지연 효과 (애니메이션을 보여주기 위해)
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        let featuresHtml = desc.features.map(f => `
-            <div class="description-item">
-                <span class="item-title">${f.title}</span>
-                <p class="item-text">${f.text}</p>
-            </div>
-        `).join('');
+        prediction.sort((a, b) => b.probability - a.probability);
+        labelContainer.innerHTML = '';
 
-        card.innerHTML = `
-            <div class="result-header">
-                <h2 class="result-title">${desc.title}</h2>
-                <p class="result-percentage">${prob}%</p>
-            </div>
-            <div class="result-description">
-                <p class="description-main">${desc.main}</p>
-                <div class="description-list">${featuresHtml}</div>
-            </div>
-        `;
-        labelContainer.appendChild(card);
-    });
+        prediction.forEach((p, index) => {
+            const prob = (p.probability * 100).toFixed(0);
+            if (prob < 1) return;
 
-    actionBar.style.display = 'flex';
+            // 레이블 매칭 개선 (대소문자 및 공백 제거 대응)
+            const className = p.className.toLowerCase().trim();
+            const desc = currentModelInfo.descriptions[className] || {
+                title: p.className,
+                main: "당신은 특별한 매력을 가지고 있습니다!",
+                features: []
+            };
+
+            const card = document.createElement('div');
+            card.className = `result-card ${index === 0 ? 'top-match' : ''}`;
+            card.style.animationDelay = `${index * 0.15}s`;
+            
+            let featuresHtml = desc.features.map(f => `
+                <div class="description-item">
+                    <span class="item-title">${f.title}</span>
+                    <p class="item-text">${f.text}</p>
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="result-header">
+                    <h2 class="result-title">${desc.title}</h2>
+                    <p class="result-percentage">${prob}%</p>
+                </div>
+                <div class="result-description">
+                    <p class="description-main">${desc.main}</p>
+                    <div class="description-list">${featuresHtml}</div>
+                </div>
+            `;
+            labelContainer.appendChild(card);
+        });
+
+        actionBar.style.display = 'flex';
+        // 결과로 부드럽게 이동
+        labelContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+        console.error("Prediction error", e);
+        alert("이미지 분석 중 오류가 발생했습니다.");
+    } finally {
+        scannerLine.style.display = 'none';
+    }
 }
 
-/**
- * 이벤트 리스너
- */
+// Event Listeners
 btnUpload.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
             imagePreview.src = e.target.result;
@@ -242,21 +251,30 @@ fileInput.addEventListener('change', (e) => {
             imagePreview.onload = () => predict(imagePreview);
         };
         reader.readAsDataURL(file);
+    } else if (file) {
+        alert("이미지 파일만 업로드해주세요.");
     }
 });
 
-btnReset.addEventListener('click', () => app.resetTest());
+btnReset.addEventListener('click', () => {
+    app.resetTest();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 btnShare.addEventListener('click', async () => {
     const url = window.location.href;
     if (navigator.share) {
-        await navigator.share({ title: 'AI 페이스 랩', text: '결과를 확인해보세요!', url });
+        await navigator.share({ 
+            title: 'AI 페이스 랩', 
+            text: '나의 얼굴 분석 결과를 확인해보세요!', 
+            url 
+        });
     } else {
         await navigator.clipboard.writeText(url);
-        alert('링크가 복사되었습니다!');
+        alert('링크가 클립보드에 복사되었습니다!');
     }
 });
 
-// 드래그 앤 드롭
 uploadWrapper.addEventListener('dragover', (e) => {
     e.preventDefault();
     uploadWrapper.classList.add('dragover');
